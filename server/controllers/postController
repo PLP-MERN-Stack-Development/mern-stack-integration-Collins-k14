@@ -1,0 +1,111 @@
+
+const Post = require('../models/Post');
+const Category = require('../models/categories');
+const User = require('../models/User'); 
+
+// Get all posts
+exports.getAllPosts = async (req, res, next) => {
+  try {
+    const posts = await Post.find()
+      .populate('author', 'name email') 
+      .populate('category', 'name slug'); 
+
+    res.status(200).json({
+      success: true,
+      data: posts,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Get post by slug
+
+exports.getPostBySlug = async (req, res, next) => {
+  try {
+    const post = await Post.findOne({ slug: req.params.slug })
+      .populate('author', 'name email')
+      .populate('category', 'name slug');
+
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: post,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+// Create new post
+
+exports.createPost = async (req, res, next) => {
+  try {
+    const post = new Post(req.body);
+    await post.save();
+
+    await post.populate('author', 'name email');
+    await post.populate('category', 'name slug');
+
+    res.status(201).json({
+      success: true,
+      data: post,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+//  Update post by slug
+exports.updatePost = async (req, res, next) => {
+  try {
+    const updatedPost = await Post.findOneAndUpdate(
+      { slug: req.params.slug },
+      { $set: req.body },
+      { new: true, runValidators: true }
+    )
+      .populate('author', 'name email')
+      .populate('category', 'name slug');
+
+    if (!updatedPost) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: updatedPost,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Delete post by slug
+
+exports.deletePost = async (req, res, next) => {
+  try {
+    const post = await Post.findOneAndDelete({ slug: req.params.slug });
+
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Post deleted successfully',
+    });
+  } catch (err) {
+    next(err);
+  }
+};

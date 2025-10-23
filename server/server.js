@@ -8,9 +8,9 @@ const dotenv = require('dotenv');
 const path = require('path');
 
 // Import routes
-const postRoutes = require('./routes/posts');
-const categoryRoutes = require('./routes/categories');
-const authRoutes = require('./routes/auth');
+const postRoutes = require('./routes/postRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+// const authRoutes = require('./routes/auth');
 
 // Load environment variables
 dotenv.config();
@@ -38,7 +38,7 @@ if (process.env.NODE_ENV === 'development') {
 // API routes
 app.use('/api/posts', postRoutes);
 app.use('/api/categories', categoryRoutes);
-app.use('/api/auth', authRoutes);
+// app.use('/api/auth', authRoutes);
 
 // Root route
 app.get('/', (req, res) => {
