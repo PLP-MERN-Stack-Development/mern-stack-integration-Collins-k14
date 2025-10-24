@@ -28,7 +28,8 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Handle authentication errors
+// Handle authentication errors
+
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
@@ -56,15 +57,45 @@ export const postService = {
     return response.data;
   },
 
-  // Create a new post
+  // Create a new post with OPTIONAL image upload
   createPost: async (postData) => {
-    const response = await api.post('/posts', postData);
+    const formData = new FormData();
+
+    Object.keys(postData).forEach((key) => {
+      if (key !== 'image') {
+        formData.append(key, postData[key]);
+      }
+    });
+
+    if (postData.image) {
+      formData.append('image', postData.image);
+    }
+
+    const response = await api.post('/posts', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+
     return response.data;
   },
 
-  // Update an existing post
+  // Update an existing post with OPTIONAL image upload
   updatePost: async (id, postData) => {
-    const response = await api.put(`/posts/${id}`, postData);
+    const formData = new FormData();
+
+    Object.keys(postData).forEach((key) => {
+      if (key !== 'image') {
+        formData.append(key, postData[key]);
+      }
+    });
+
+    if (postData.image) {
+      formData.append('image', postData.image);
+    }
+
+    const response = await api.put(`/posts/${id}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+
     return response.data;
   },
 
@@ -89,13 +120,14 @@ export const postService = {
 
 // Category API services
 export const categoryService = {
-  // Get all categories
+// Get all categories
+
   getAllCategories: async () => {
     const response = await api.get('/categories');
     return response.data;
   },
-
   // Create a new category
+
   createCategory: async (categoryData) => {
     const response = await api.post('/categories', categoryData);
     return response.data;
@@ -104,13 +136,14 @@ export const categoryService = {
 
 // Auth API services
 export const authService = {
-  // Register a new user
+    // Register a new user
+
   register: async (userData) => {
     const response = await api.post('/auth/register', userData);
     return response.data;
   },
-
   // Login user
+
   login: async (credentials) => {
     const response = await api.post('/auth/login', credentials);
     if (response.data.token) {
@@ -119,18 +152,18 @@ export const authService = {
     }
     return response.data;
   },
-
   // Logout user
+
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
   },
-
   // Get current user
+
   getCurrentUser: () => {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   },
 };
 
-export default api; 
+export default api;
