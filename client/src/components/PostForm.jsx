@@ -1,19 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { categoryService } from '../services/api';
 
 export default function PostForm({ initialData = {}, onSubmit }) {
   const [form, setForm] = useState({
-    title: initialData.title || '',
-    content: initialData.content || '',
-    category: initialData.category || '',
+    title: '',
+    content: '',
+    category: '',
+    ...initialData,
   });
+  const [categories, setCategories] = useState([]);
+  const [errors, setErrors] = useState({});
 
-  const handleChange = e => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const data = await categoryService.getAllCategories();
+      setCategories(data);
+    };
+    fetchCategories();
+  }, []);
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const validate = () => {
+    const newErrors = {};
+    if (!form.title) newErrors.title = 'Title is required';
+    if (!form.content) newErrors.content = 'Content is required';
+    if (!form.category) newErrors.category = 'Category is required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(form);
+    if (!validate()) return;
+    onSubmit(form); 
   };
 
   return (
@@ -21,23 +41,28 @@ export default function PostForm({ initialData = {}, onSubmit }) {
       <input
         type="text"
         name="title"
-        placeholder="Title"
         value={form.title}
         onChange={handleChange}
+        placeholder="Post Title"
       />
+      {errors.title && <p>{errors.title}</p>}
+
       <textarea
         name="content"
-        placeholder="Content"
         value={form.content}
         onChange={handleChange}
+        placeholder="Post Content"
       />
-      <input
-        type="text"
-        name="category"
-        placeholder="Category"
-        value={form.category}
-        onChange={handleChange}
-      />
+      {errors.content && <p>{errors.content}</p>}
+
+      <select name="category" value={form.category} onChange={handleChange}>
+        <option value="">Select Category</option>
+        {categories.map((cat) => (
+          <option key={cat._id} value={cat.name}>{cat.name}</option>
+        ))}
+      </select>
+      {errors.category && <p>{errors.category}</p>}
+
       <button type="submit">Submit</button>
     </form>
   );
