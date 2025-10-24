@@ -6,19 +6,25 @@ export const useApi = (apiFunc, ...params) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    let isMounted = true;
     const fetchData = async () => {
       setLoading(true);
       try {
         const result = await apiFunc(...params);
-        setData(result);
+        if (isMounted) setData(result);
       } catch (err) {
-        setError(err);
+        if (isMounted) setError(err);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
+
     fetchData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [apiFunc, ...params]);
 
-  return { data, loading, error };
+  return { data, loading, error, setData };
 };

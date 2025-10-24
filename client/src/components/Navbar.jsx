@@ -8,6 +8,7 @@ export default function Navbar() {
   return (
     <nav>
       <Link to="/">Home</Link>
+
       {user ? (
         <>
           <Link to="/create">Create Post</Link>
@@ -15,7 +16,10 @@ export default function Navbar() {
           <span>Welcome, {user.name}</span>
         </>
       ) : (
-        <Link to="/login">Login</Link>
+        <>
+          <Link to="/login">Login</Link>
+          <Link to="/register">Sign Up</Link> 
+        </>
       )}
     </nav>
   );
