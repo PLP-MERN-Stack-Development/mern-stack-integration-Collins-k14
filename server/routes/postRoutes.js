@@ -2,32 +2,39 @@ const express = require('express');
 const router = express.Router();
 
 const postController = require('../controllers/postController');
+const upload = require('../middleware/upload');
 const validateRequest = require('../middleware/validateRequest');
 const postSchema = require('../validation/postValidation');
 const slugSchema = require('../validation/slugValidation');
-const upload = require('../middleware/upload');
+const auth = require('../middleware/auth'); // <--- middleware to protect routes
 
-// GET posts
-router.get('/', postController.getAllPosts);
-router.get('/:slug', validateRequest(null, slugSchema), postController.getPostBySlug);
+// Routes
 
-// POST (Create Post with optional image upload)
+// Public routes
+router.get('/', postController.getAllPosts); // all posts with search/pagination
+router.get('/:id', postController.getPostById); // single post by id or slug
+
+// Protected routes (require login)
 router.post(
   '/',
-  upload.single('featuredImage'),
+  auth, // <--- user must be logged in
+  upload.single('image'),
   validateRequest(postSchema),
   postController.createPost
 );
 
-// PUT (Update Post with optional image upload)
+// If you implement update/delete later:
 router.put(
   '/:slug',
-  upload.single('featuredImage'),
+  auth, // must be author
+  upload.single('image'),
   validateRequest(postSchema, slugSchema),
   postController.updatePost
 );
 
-// DELETE
-router.delete('/:slug', validateRequest(null, slugSchema), postController.deletePost);
+router.delete('/:slug',
+  auth,
+  postController.deletePost
+);
 
 module.exports = router;

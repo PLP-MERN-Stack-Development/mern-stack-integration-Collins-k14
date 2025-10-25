@@ -1,6 +1,6 @@
 // middleware/upload.js
-import multer from 'multer';
-import path from 'path';
+const multer = require('multer');
+const path = require('path');
 
 // Set storage engine
 const storage = multer.diskStorage({
@@ -30,4 +30,4 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ storage, fileFilter });
 
-export default upload;
+module.exports = upload;
