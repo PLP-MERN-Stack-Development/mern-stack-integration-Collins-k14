@@ -2,6 +2,9 @@
 
 A modern full-stack blog application built with **MongoDB**, **Express.js**, **React**, and **Node.js**, featuring user-friendly UI components via **Shadcn UI** and clean architecture for scalability.
 
+## Screenshots of the application
+![alt text](image-1.png)
+
 ---
 
 ## 🚀 Project Overview
@@ -97,6 +100,5 @@ Create/Edit Post Form (with dropdown category)
 
 Responsive layout
 
-## Screenshots of the application
+---
 
-![alt text](image.png)
