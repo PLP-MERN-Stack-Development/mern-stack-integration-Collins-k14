@@ -101,6 +101,3 @@ Create/Edit Post Form (with dropdown category)
 Responsive layout
 
 ---
-
-
-![alt text](image.png)
