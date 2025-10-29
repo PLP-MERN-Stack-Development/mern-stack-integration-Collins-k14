@@ -99,4 +99,4 @@ Responsive layout
 
 ## Screenshots of the application
 
-![alt text](image.png)
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f4d08c06-9d88-4ddf-bff7-355324a53af1" />
