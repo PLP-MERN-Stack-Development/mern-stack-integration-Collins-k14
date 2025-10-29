@@ -1,4 +1,4 @@
-// validation/postValidation.js
+// postValidation
 const Joi = require('joi');
 
 const postSchema = Joi.object({

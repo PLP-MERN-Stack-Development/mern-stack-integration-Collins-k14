@@ -51,8 +51,12 @@ exports.getAllPosts = async (req, res, next) => {
 // Create new post
 exports.createPost = async (req, res, next) => {
   try {
+    console.log('createPost - req.body:', req.body);
+    console.log('createPost - req.file:', req.file);
+    console.log('createPost - auth user:', req.user && (req.user._id || req.user.id));
+
     const { title, content, category, tags, excerpt, isPublished } = req.body;
-    const author = req.user._id; // require authentication
+    const author = req.user ? req.user._id : req.body.author;
 
     let categoryId = category;
     const categoryDoc = await Category.findOne({ slug: category });

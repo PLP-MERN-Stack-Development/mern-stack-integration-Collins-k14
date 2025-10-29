@@ -42,11 +42,12 @@ api.interceptors.response.use(
 // Post API services
 export const postService = {
   // Get all posts with optional pagination and filters
-  getAllPosts: async (page = 1, limit = 10, category = null) => {
+  getAllPosts: async (page = 1, limit = 10, category = null, search = '') => {
     let url = `/posts?page=${page}&limit=${limit}`;
     if (category) {
       url += `&category=${category}`;
     }
+    if (search) url += `&search=${search}`;
     const response = await api.get(url);
     return response.data;
   },
@@ -165,5 +166,23 @@ export const authService = {
     return user ? JSON.parse(user) : null;
   },
 };
+
+export async function getAllPosts(page = 1, limit = 10, category = '', search = '') {
+  const params = {};
+  if (page) params.page = page;
+  if (limit) params.limit = limit;
+  if (category) params.category = category;
+  if (search) params.search = search;
+
+  const res = await axios.get('/api/posts', { params });
+  return res.data; // return the server payload { success, data, pagination }
+}
+
+export async function createPost(formData, token) {
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  // DO NOT set 'Content-Type' manually
+  const res = await axios.post('/api/posts', formData, { headers });
+  return res.data;
+}
 
 export default api;

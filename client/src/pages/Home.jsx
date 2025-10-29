@@ -8,6 +8,16 @@ export default function Home() {
   const { data: categories } = useApi(categoryService.getAllCategories);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
+  // normalize categories to an array 
+  const categoryList = Array.isArray(categories)
+    ? categories
+    : (categories && categories.data) || [];
+
+  // normalize posts to an array
+  const postList = Array.isArray(posts)
+    ? posts
+    : (posts && posts.data) || [];
+
   const handleCategoryChange = (category) => setSelectedCategory(category);
 
   return (
@@ -15,10 +25,10 @@ export default function Home() {
       <h1>Blog Posts</h1>
 
       {/* Categories Filter */}
-      {categories && (
+      {categoryList.length > 0 && (
         <div>
           <button onClick={() => setSelectedCategory(null)}>All</button>
-          {categories.map((cat) => (
+          {categoryList.map((cat) => (
             <button key={cat._id} onClick={() => handleCategoryChange(cat.name)}>
               {cat.name}
             </button>
@@ -30,8 +40,8 @@ export default function Home() {
       {loading && <p>Loading posts...</p>}
       {error && <p>Error loading posts.</p>}
 
-      {/* Post List */}
-      {posts && <PostList posts={posts} />}
+      {/* Post List - pass normalized posts and categories */}
+      <PostList posts={postList} categories={categoryList} />
     </div>
   );
 }

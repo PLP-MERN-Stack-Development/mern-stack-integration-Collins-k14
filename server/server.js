@@ -14,6 +14,11 @@ const authRoutes = require('./routes/authRoutes');
 
 // Load environment variables
 dotenv.config();
+if (!process.env.JWT_SECRET) {
+  console.error('FATAL: JWT_SECRET is not set in .env — set process.env.JWT_SECRET and restart the server.');
+  process.exit(1);
+}
+
 
 // Initialize Express app
 const app = express();
@@ -75,4 +80,4 @@ process.on('unhandledRejection', (err) => {
   process.exit(1);
 });
 
-module.exports = app; 
+module.exports = app;
